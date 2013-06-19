@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
 
-        File dir = new File("/home/derek/db/raw");
+        File dir = new File("/home/derek/dev/projects/raw_db/");
         File[] flightCSVs = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -40,16 +40,15 @@ public class Main {
             e.printStackTrace();
         }
 
-        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(8, 16, 60,
-                TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(20),
+        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(32, 64, 10,
+                TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(64),
                 new ThreadPoolExecutor.CallerRunsPolicy());
 
         for (File csv : flightCSVs) {
             threadPool.execute(new CsvImport(csv, ticketsDB));
         }
 
-        for (File sql3: flightSql3)
-        {
+        for (File sql3 : flightSql3) {
             threadPool.execute(new Sqlite3Import(sql3, ticketsDB));
         }
 

@@ -4,6 +4,7 @@
     <root id="archive" name="dbImport.jar">
       <element id="module-output" name="dbImport" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/mongo-2.10.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/sqlite-jdbc-3.7.2.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

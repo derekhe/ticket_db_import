@@ -9,8 +9,10 @@ import java.io.File;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,13 +22,13 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class Sqlite3Import implements Runnable {
+    private File sqlite3DB;
+    private DB ticketDB;
+
     public Sqlite3Import(File sqlite3DB, DB ticketsDB) {
         this.sqlite3DB = sqlite3DB;
         this.ticketDB = ticketsDB;
     }
-
-    private File sqlite3DB;
-    private DB ticketDB;
 
     @Override
     public void run() {
@@ -45,13 +47,13 @@ public class Sqlite3Import implements Runnable {
 
             ResultSet rs = statement.executeQuery("select * from ticket");
 
-            DateFormat fetchTimeFormat = DateFormat.getDateTimeInstance();
+            DateFormat fetchTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
             fetchTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
 
-            DateFormat dateFormat = DateFormat.getDateInstance();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
 
-            DateFormat departTimeFormat = DateFormat.getTimeInstance();
+            DateFormat departTimeFormat = new SimpleDateFormat("HH:mm:ss");
             departTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
 
             int totalRecords = 0;
@@ -65,10 +67,11 @@ public class Sqlite3Import implements Runnable {
                 Date fetchTime = fetchTimeFormat.parse(rs.getString("fetchTime"));
                 String airline = rs.getString("airline");
                 int price = rs.getInt("price");
+                if (price == 0) continue;
                 int discount = rs.getInt("discount");
                 Date departDate = dateFormat.parse(rs.getString("date"));
-                Date departTime = departTimeFormat.parse(rs.getString("departureTime")+":00");
-                Date arriveTime = departTimeFormat.parse(rs.getString("arriveTime")+":00");
+                Date departTime = departTimeFormat.parse(rs.getString("departureTime") + ":00");
+                Date arriveTime = departTimeFormat.parse(rs.getString("arriveTime") + ":00");
                 String source = rs.getString("priceSource");
 
                 GregorianCalendar fetchTimeCal = new GregorianCalendar();

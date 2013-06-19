@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -29,10 +30,10 @@ public class CsvImport implements Runnable {
 
     @Override
     public void run() {
-        DateFormat fetchTimeFormat = DateFormat.getDateTimeInstance();
+        DateFormat fetchTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         fetchTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT+0"));
 
-        DateFormat tf = DateFormat.getTimeInstance();
+        DateFormat tf = new SimpleDateFormat("HH:mm:ss");
         tf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
 
         try {
@@ -57,11 +58,12 @@ public class CsvImport implements Runnable {
 
                 String airline = lines[2];
                 int price = Integer.parseInt(lines[3]);
-                int discount = (int)(Float.parseFloat(lines[4])*10);
+                if (price == 0) continue;
+                int discount = (int) (Float.parseFloat(lines[4]) * 10);
                 Date departDate = fetchTimeFormat.parse(lines[5]);
                 Date departTime = tf.parse(lines[6]);
                 Date arriveTime = tf.parse(lines[7]);
-                String source = lines[10].replace("QUNAR","Q").replace("KUXUN","K").replace("TAOBAO","T");
+                String source = lines[10].replace("QUNAR", "Q").replace("KUXUN", "K").replace("TAOBAO", "T");
 
                 String collectionName = String.format("db_%d_%02d_%02d", fetchTimeCal.get(Calendar.YEAR), fetchTimeCal.get(Calendar.MONTH) + 1, fetchTimeCal.get(Calendar.DAY_OF_MONTH));
 
